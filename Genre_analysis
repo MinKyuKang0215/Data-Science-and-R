@@ -1,0 +1,319 @@
+---
+title: "Group Project"
+output: html_document
+---
+
+---
+title: "Team_7"
+output: html_document
+---
+---Description----
+This document describes processes of data analysis of movie.
+The data came from Kofic, which is Korean Film Council.
+The data is available on the urls below:
+- all movies listed in Kofic (https://www.kobis.or.kr/kobis/business/mast/mvie/searchMovieList.do)
+- Data related with sales rev etc.
+(https://www.kobis.or.kr/kobis/business/stat/offc/searchOfficHitTotList.do?searchMode=year)
+
+---Data Cleaning----
+Before loading data, we use readxl package to load them
+```{r}
+library(readxl)
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(RColorBrewer)
+```
+
+At first, load data
+this r codes are encoded as 'utf-8'
+if errors on loading data, reopen this document with 'utf-8'
+```{r}
+df <- read_excel('(NEW2)(Merged) Movie Data.xlsx')
+head(df)
+```
+
+Check data
+```{r}
+summary(df)
+```
+We saw unnecessary columns
+Change name of column to english for easier processing
+```{r}
+#colnames(df)
+
+colnames(df)[1] <- 'Name'
+colnames(df)[14] <- 'Release_Date'
+colnames(df)[17] <- 'Nationality'
+colnames(df)[18] <- 'Total_screens'
+colnames(df)[19] <- 'Box_office'
+colnames(df)[20] <- 'Audience'
+colnames(df)[23] <- 'Genre'
+colnames(df)[24] <- 'Rate'
+colnames(df)[25] <- 'Artistic'
+
+colnames(df)
+```
+
+we decided to drop: column number 2~13, 15, 16, 21, 22
+```{r}
+df_edit_col <- df %>% select(Name, Release_Date, Nationality, 
+                      Total_screens, Box_office, Audience,
+                      Genre, Rate, Artistic)
+
+View(df_edit_col)
+```
+
+Convert Release Date from numeric to as.Date
+```{r}
+df_edit_col$Release_Date <- as.Date(df$Release_Date, origin='1900-01-01')
+
+df_edit_col$Release_Date
+
+View(df_edit_col)
+```
+
+We skip rows with NAs
+```{r}
+df_edit_col <- na.omit(df_edit_col)
+
+View(df_edit_col)
+```
+
+We also skip rows that the columns 'Total_screens', 'Box_office', 'Audience' both have the value 0.
+```{r}
+df_edit_col <- subset(df_edit_col, Total_screens != 0 & Box_office != 0 & Audience != 0)
+
+df_edit_col
+```
+
+```{r}
+ggplot(df_edit_col, aes(x = Genre)) + 
+  geom_bar(fill="gold", colour="black") +
+  coord_flip() +
+  ylab("Count of each genre") +
+  ggtitle("Histogram of each genre") +
+  theme_minimal()
+
+ggsave("Histogram of each genre.jpg")
+```
+```{r}
+new_data <- df_edit_col %>%
+  filter(Genre == "판타지")
+
+str(new_data$Box_office)
+fantasy <- as.numeric(new_data$Box_office)
+str(fantasy)
+
+fantasy_mean <- mean(fantasy)
+fantasy_median <- median(fantasy)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data1 <- df_edit_col %>%
+  filter(Genre == "코미디")
+
+comedy <- as.numeric(new_data1$Box_office)
+
+comedy_mean <- mean(comedy)
+comedy_median <- median(comedy)
+#--------------------------------------------------------------------------------------------------------------------------------
+new_data2 <- df_edit_col %>%
+  filter(Genre == "전쟁")
+
+war <- as.numeric(new_data2$Box_office)
+
+war_mean <- mean(war)
+war_median <- median(war)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data3 <- df_edit_col %>%
+  filter(Genre == "어드벤처")
+
+adventure <- as.numeric(new_data3$Box_office)
+
+adventure_mean <- mean(adventure)
+adventure_median <- median(adventure)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data4 <- df_edit_col %>%
+  filter(Genre == "액션")
+
+action <- as.numeric(new_data4$Box_office)
+
+action_mean <- mean(action)
+action_median <- median(action)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data5 <- df_edit_col %>%
+  filter(Genre == "애니메이션")
+
+animation <- as.numeric(new_data5$Box_office)
+
+animation_mean <- mean(animation)
+animation_median <- median(animation)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data6 <- df_edit_col %>%
+  filter(Genre == "스릴러")
+
+thriller <- as.numeric(new_data6$Box_office)
+
+thriller_mean <- mean(thriller)
+thriller_median <- median(thriller)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data7 <- df_edit_col %>%
+  filter(Genre == "성인물(에로)")
+
+adult <- as.numeric(new_data7$Box_office)
+
+adult_mean <- mean(adult)
+adult_median <- median(adult)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data8 <- df_edit_col %>%
+  filter(Genre == "서부극(웨스턴)")
+
+western <- as.numeric(new_data8$Box_office)
+
+western_mean <- mean(western)
+western_median <- median(western)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data9 <- df_edit_col %>%
+  filter(Genre == "사극")
+
+history <- as.numeric(new_data9$Box_office)
+
+history_mean <- mean(history)
+history_median <- median(history)
+#------------------------------------------------------------------------------------------------------------------------------
+new_data10 <- df_edit_col %>%
+  filter(Genre == "범죄")
+
+criminal <- as.numeric(new_data10$Box_office)
+
+criminal_mean <- mean(criminal)
+criminal_median <- median(criminal)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data11 <- df_edit_col %>%
+  filter(Genre == "미스터리")
+
+mystery <- as.numeric(new_data11$Box_office)
+
+mystery_mean <- mean(mystery)
+mystery_median <- median(mystery)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data12 <- df_edit_col %>%
+  filter(Genre == "뮤지컬")
+
+musical <- as.numeric(new_data12$Box_office)
+
+musical_mean <- mean(musical)
+musical_median <- median(musical)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data13 <- df_edit_col %>%
+  filter(Genre == "멜로/로맨스")
+
+romance <- as.numeric(new_data13$Box_office)
+
+romance_mean <- mean(romance)
+romance_median <- median(romance)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data14 <- df_edit_col %>%
+  filter(Genre == "드라마")
+
+drama <- as.numeric(new_data14$Box_office)
+
+drama_mean <- mean(drama)
+drama_median <- median(drama)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data15 <- df_edit_col %>%
+  filter(Genre == "다큐멘터리")
+
+documentary <- as.numeric(new_data15$Box_office)
+
+documentary_mean <- mean(documentary)
+documentary_median <- median(documentary)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data16 <- df_edit_col %>%
+  filter(Genre == "기타")
+
+etc <- as.numeric(new_data16$Box_office)
+
+etc_mean <- mean(etc)
+etc_median <- median(etc)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data17 <- df_edit_col %>%
+  filter(Genre == "공포(호러)")
+
+horror <- as.numeric(new_data17$Box_office)
+
+horror_mean <- mean(horror)
+horror_median <- median(horror)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data18 <- df_edit_col %>%
+  filter(Genre == "공연")
+
+performance <- as.numeric(new_data18$Box_office)
+
+performance_mean <- mean(performance)
+performance_median <- median(performance)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data19 <- df_edit_col %>%
+  filter(Genre == "가족")
+
+family <- as.numeric(new_data19$Box_office)
+
+family_mean <- mean(family)
+family_median <- median(family)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data20 <- df_edit_col %>%
+  filter(Genre == "SF")
+
+SF <- as.numeric(new_data20$Box_office)
+
+SF_mean <- mean(SF)
+SF_median <- median(SF)
+#-------------------------------------------------------------------------------------------------------------------------------
+new_data21 <- df_edit_col %>%
+  filter(Genre == 0)
+
+zero <- as.numeric(new_data21$Box_office)
+
+zero_mean <- mean(zero)
+zero_median <- median(zero)
+```
+
+```{r}
+genre_mean <- c(fantasy_mean, comedy_mean, war_mean, adventure_mean, action_mean, animation_mean, thriller_mean, adult_mean, western_mean, history_mean, criminal_mean, mystery_mean, musical_mean, romance_mean, drama_mean, documentary_mean, etc_mean, horror_mean, performance_mean, family_mean, SF_mean, zero_mean)
+mean_name <- c("fantasy", "comedy", "war", "adventure", "action", "animation", "thriller", "adult", "western", "history", "criminal", "mystery", "musical", "romance", "drama", "documentary", "etc", "horror", "performance", "family", "SF", "zero")
+
+genre_median <- c(fantasy_median, comedy_median, war_median, adventure_median, action_median, animation_median, thriller_median, adult_median, western_median, history_median, criminal_median, mystery_median, musical_median, romance_median, drama_median, documentary_median, etc_median, horror_median, performance_median, family_median, SF_median, zero_median)
+median_name <- c("fantasy", "comedy", "war", "adventure", "action", "animation", "thriller", "adult", "western", "history", "criminal", "mystery", "musical", "romance", "drama", "documentary", "etc", "horror", "performance", "family", "SF", "zero")
+
+genres_mean <- data.frame(mean_name, genre_mean)
+genres_median <- data.frame(median_name, genre_median)
+
+
+```
+
+```{r}
+ggplot(subset(genres_mean, mean_name != "zero"), aes(x=mean_name, y=genre_mean, fill = genre_mean)) +
+  geom_bar(stat="identity", position="dodge") +
+  coord_flip() +
+  xlab("Genre") +
+  ylab("Mean of Box Office") +
+  ggtitle("Mean of Each Genre") +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+
+ggsave("Genre mean graph.jpg")
+```
+
+
+```{r}
+ggplot(subset(genres_median, median_name != "zero"), aes(x=median_name, y=genre_median, fill = genre_median))+
+  geom_bar(stat="identity", position="dodge") +
+  coord_flip() +
+  xlab("Genre") +
+  ylab("Median of Box Office") +
+  ggtitle("Median of Each Genre") +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+  
+  
+help(theme)
+
+ggsave("Genre median graph.jpg")
+```
